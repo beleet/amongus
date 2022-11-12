@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+
+service Raft {
+
+	// function that called by candidate during the elections to collect votes
+	rpc RequestVote (RequestVoteMessage) returns (NodeResponse);
+
+	// function used to send heartbeat messages
+	rpc AppendEntries (AppendEntriesMessage) returns (NodeResponse);
+
+	// function that called by client, returns the current leader's id and address
+	rpc GetLeader (EmptyMessage) returns (LeaderResponse);
+
+	// function that called by client, makes the server sleep for (period) seconds
+	// simulate a short-term disconnection of the server from the system
+	rpc Suspend (SuspendMessage) returns (EmptyMessage);
+}
+
+
+// message with no fields
+message EmptyMessage {
+	
+}
+
+
+message RequestVoteMessage {
+	int64 term = 1;			// candidates's term
+	int64 candidateId = 2;	// id of candidate
+}
+
+
+message AppendEntriesMessage {
+	int64 term = 1;			// current term number from the leader
+	int64 leaderId = 2;		// leader's id
+}
+
+
+message SuspendMessage {
+	int64 period = 1;		// time for which the server sleeps
+}
+
+
+message NodeResponse {
+	int64 term = 1;			// number of the server
+	bool success = 2;		// result of voting (True/False)
+}
+
+
+message LeaderResponse {
+	int64 id = 1;			// current leader's id
+	string address = 2;		// current leader's andress
+}
