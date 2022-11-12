@@ -15,19 +15,25 @@ class Client:
 	def connect(self, address):
 
 		try:
-			print("Connection")
-
 			self.channel = grpc.insecure_channel(address)
 			self.stub = pb2_grpc.RaftStub(self.channel)
 
+		except grpc.RpcError:
+			print("Connection error")
+		except Exception as error:
+			print(error)
+
+	def get_leader(self):
+
+		if self.channel is not None and self.stub is not None:
+			
 			message = pb2.EmptyMessage()
 			response = self.stub.GetLeader(message)
 
 			print(response)
-		except grpc.RpcError:
-			print(f"The server {address} is unavailable")
-		except Exception as error:
-			print(error)
+
+	def suspend(self):
+		pass
 
 
 if __name__ == "__main__":
@@ -47,6 +53,13 @@ if __name__ == "__main__":
 
 			if words[0] == "connect" and len(words) == 2:
 				client.connect(words[1])
+
+			elif words[0] == "getleader" and len(words) == 1:
+				client.get_leader()
+
+			elif words[0] == "quit" and len(words) == 1:
+				print("The client ends")
+				break
 		
 		except KeyboardInterrupt:
 			print("The client ends")

@@ -17,7 +17,7 @@ class Raft(pb2_grpc.RaftServicer):
 
 		print("Getting leader")
 
-		leader = {id: 1, address: ""}
+		leader = {"id": 1, "address": ""}
 		return pb2.LeaderResponse(**leader)
 
 
