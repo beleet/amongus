@@ -4,24 +4,36 @@ import raft_pb2_grpc as pb2_grpc
 
 import grpc
 import sys
+import random
 
 from concurrent import futures
 
 
 CONFIG = "config.conf"
 
-
-class Raft(pb2_grpc.RaftServicer):
-
-	def GetLeader(self, request, context):
-
-		print("Getting leader")
-
-		leader = {"id": 1, "address": ""}
-		return pb2.LeaderResponse(**leader)
-
-
 def handler():
+
+	class Raft(pb2_grpc.RaftServicer):
+
+		def __init__(self):
+
+			self.term = 0
+			self.delay = random.randrange(150, 300) / 1000
+			
+			self.state = 0		# 0 - Follower, 1 - Candidate, 2 - Leader
+			self.is_voted = False
+			self.vote_counter = 0
+			
+			self.current_leader_id = None
+			self.current_leader_address = None
+
+		def GetLeader(self, request, context):
+
+			print("Getting leader")
+
+			leader = {"id": current_leader_id, "address": current_leader_address}
+			return pb2.LeaderResponse(**leader)
+
 
 	server_id = sys.argv[1]
 	host, port = None, None
